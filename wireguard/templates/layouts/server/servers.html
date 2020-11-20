@@ -29,10 +29,11 @@
                                         <li>PostUp: <span>{{ server.post_up }}</span></li>
                                         <li>PostDown: <span>{{ server.post_down }}</span></li>
                                     </ul>
+                                    <br>
+                                    <div class="extra">
+                                        <a href="{% url 'wireguard:server-delete' server.pk %}" class="button btn-delete delete-config" style="float:left;">Delete Profile</a>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="extra">
-                                <a href="{% url 'wireguard:server-delete' server.pk %}" class="button btn-delete delete-config" style="float:left;">Delete Profile</a>
                             </div>
                         {% endfor %}
                     {% else %}
