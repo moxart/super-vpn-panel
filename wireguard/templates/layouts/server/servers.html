@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %} Servers {% endblock title %}
+
+{% block body %}
+    {% include 'includes/navbar.html' %}
+    <div class="section peers-list">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-12">
+                    <div class="columns">
+                        <div class="column is-6 pb-6">
+                            <h3 class="is-size-4">Servers</h3>
+                            <br>
+                        </div>
+                    </div>
+                    {% if servers %}
+                        {% for server in servers %}
+                            <div class="columns peers">
+                                <div class="column is-three-quarters peer">
+                                    <a href="{% url 'wireguard:server-subset' server.interface %}"><h3 class="is-size-4 mb-4">{{ server.interface }}</h3></a>
+                                    <ul>
+                                        <li>Private Key: <span>{{ server.private_key }}</span></li>
+                                        <li>Public Key: <span>{{ server.public_key }}</span></li>
+                                        <li>Address: <span>{{ server.address }}</span></li>
+                                        <li>Listen Port: <span>{{ server.listen_port }}</span></li>
+                                        <li>PostUp: <span>{{ server.post_up }}</span></li>
+                                        <li>PostDown: <span>{{ server.post_down }}</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="extra">
+                                <a href="{% url 'wireguard:server-delete' server.pk %}" class="button btn-delete delete-config" style="float:left;">Delete Profile</a>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="columns">
+                            <div class="column is-half-desktop">
+                                <div class="message is-warning warning-server">
+                                    <div class="message-header">
+                                        <p>Warning</p>
+                                    </div>
+                                    <div class="message-body">
+                                        <span class="is-size-5">There are no server keys has generated yet.</span>
+                                        <br><br>
+                                        <a href="{% url 'wireguard:server-new' %}" class="button btn-custom-dark">Add Server</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock body %}

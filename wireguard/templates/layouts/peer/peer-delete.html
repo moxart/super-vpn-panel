@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %} Delete {{ peer|capfirst }} Profile {% endblock title %}
+
+{% block body %}
+    {% include 'includes/navbar.html' %}
+    <div class="section confirm-delete">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-12">
+                    <div class="columns">
+                        <div class="column is-6 pb-6">
+                            <h3 class="is-size-4">Are you sure you want to delete "{{ peer }}" ?</h3>
+                            <br>
+                            <div class="pre-config mt-3 item">
+        <pre id="{{ peer.profile_name }}">
+[Interface]
+Address = {{ peer.address }}
+PrivateKey = {{ peer.private_key }}DNS = {{ peer.dns }}
+
+[Peer]
+PublicKey = {{ peer.public_key }}AllowedIPs = {{ peer.allowed_ips }}
+Endpoint = {{ peer.server.endpoint }}:{{ peer.listen_port }}</pre>
+                                <button class="copy-clipboard" data-clipboard-target="#{{ peer.profile_name }}"><svg role="img" xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24" aria-labelledby="copyIconTitle" stroke="#DF9B6D" stroke-width="1" stroke-linecap="square" stroke-linejoin="miter" fill="none" color="#DF9B6D"> <title id="copyIconTitle">Copy</title> <rect width="12" height="14" x="8" y="7"/> <polyline points="16 3 4 3 4 17"/> </svg></button>
+                            </div>
+                            <form method="post">{% csrf_token %}
+                                <input type="submit" class="button btn-custom-dark mt-4" style="float: left; margin-right: 10px;" value="Confirm">
+                                <a href="{% url 'wireguard:home' %}" class="button btn-cancel mt-4" style="float:right;">Cancel</a>
+                            </form>
+                            <br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock body %}

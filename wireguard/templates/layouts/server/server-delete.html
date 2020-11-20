@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %} Delete {{ server|capfirst }} Profile {% endblock title %}
+
+{% block body %}
+    {% include 'includes/navbar.html' %}
+    <div class="section confirm-delete">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-12">
+                    <div class="columns">
+                        <div class="column is-12">
+                            <h3 class="is-size-4">Are you sure you want to delete "{{ server }}" ?</h3>
+                            <br>
+                            <div class="pre-config">
+                                <div class="notification-copied">Config Copied!</div>
+                                <pre id="{{ server.interface }}">
+[Interface]
+
+Address = {{ server.address }}
+SaveConfig = {{ server.save_config|lower }}
+PostUp = {{ server.post_up }}
+PostDown = {{ server.post_down }}
+ListenPort = {{ server.listen_port }}
+PrivateKey = {{ server.private_key }}
+</pre>
+                                <button class="copy-clipboard" data-clipboard-target="#{{ peer.profile_name }}"><svg role="img" xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24" aria-labelledby="copyIconTitle" stroke="#DF9B6D" stroke-width="1" stroke-linecap="square" stroke-linejoin="miter" fill="none" color="#DF9B6D"> <title id="copyIconTitle">Copy</title> <rect width="12" height="14" x="8" y="7"/> <polyline points="16 3 4 3 4 17"/> </svg></button>
+                            </div>
+                        </div>
+                    </div>
+                        <form method="post">{% csrf_token %}
+                            <input type="submit" class="button btn-custom-dark" style="float: left; margin-right: 10px;" value="Confirm">
+                            <a href="{% url 'wireguard:home' %}" class="button btn-cancel" style="float:left;">Cancel</a>
+                        </form>
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+{% endblock body %}

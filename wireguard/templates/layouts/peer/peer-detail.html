@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %} {{ peer }} {% endblock title %}
+
+{% block body %}
+    {% include 'includes/navbar.html' %}
+    <div class="section peer-detail">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-12">
+                    <div class="columns">
+                        <div class="column is-6-fullhd is-12-touch">
+                            <h3 class="is-size-4">Result Peer</h3>
+                            <br>
+                            {% if peer %}
+                                <div class="columns is-multiline is-mobile">
+                                    <div class="column is-half-desktop is-full-touch">
+                                        <div class="field">
+                                            <div class="control">
+                                                <label class="label help" for="profile name">profile name</label>
+                                                <input type="text" class="input is-primary" value="{{ peer.profile_name }}" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="column is-half-desktop is-full-touch">
+                                        <div class="field">
+                                            <div class="control">
+                                                <label class="label help" for="email">email</label>
+                                                <input type="text" class="input is-primary" value="{{ peer.email }}" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="column is-half-desktop is-full-touch">
+                                        <div class="field">
+                                            <div class="control">
+                                                <label class="label help" for="private key">private key</label>
+                                                <input type="text" class="input is-primary" value="{{ peer.private_key }}" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="column is-half-desktop is-full-touch">
+                                        <div class="field">
+                                            <div class="control">
+                                                <label class="label help" for="public key">public key</label>
+                                                <input type="text" class="input is-primary" value="{{ peer.public_key }}" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="column is-half-desktop is-full-touch">
+                                        <div class="field">
+                                            <div class="control">
+                                                <label class="label help" for="preshared key">preshared key</label>
+                                                <input type="text" class="input is-primary" value="{{ peer.preshared_key }}" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="column is-half-desktop is-full-touch">
+                                        <div class="field">
+                                            <div class="control">
+                                                <label class="label help" for="allowed ips">allowed ips</label>
+                                                <input type="text" class="input is-primary" value="{{ peer.allowed_ips }}" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="column is-full">
+                                        <div class="field">
+                                            <div class="control">
+                                                <label class="label help" for="allowed ips">full config</label>
+                                                <div class="columns peer-config">
+                                                    <div class="column">
+                                                        <div class="pre-config mt-3 item">
+        <pre id="{{ peer.profile_name }}">
+[Interface]
+Address = {{ peer.address }}
+PrivateKey = {{ peer.private_key }}DNS = {{ peer.dns }}
+
+[Peer]
+PublicKey = {{ peer.server.public_key }}
+AllowedIPs = {{ peer.allowed_ips }}
+Endpoint = {{ peer.server.endpoint }}:{{ peer.listen_port }}</pre>
+
+                                                            <button class="copy-clipboard" data-clipboard-target="#{{ peer.profile_name }}"><svg role="img" xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24" aria-labelledby="copyIconTitle" stroke="#DF9B6D" stroke-width="1" stroke-linecap="square" stroke-linejoin="miter" fill="none" color="#DF9B6D"> <title id="copyIconTitle">Copy</title> <rect width="12" height="14" x="8" y="7"/> <polyline points="16 3 4 3 4 17"/> </svg></button>
+                                                            <div class="notification-copied">Config Copied!</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <form action="" method="post">
+                                    {% csrf_token %}
+                                    <a href="{% static 'tars' %}/{{ peer }}.tar.gz" class="button btn-custom-dark download-config"><svg class="mr-2" role="img" xmlns="http://www.w3.org/2000/svg" width="28px" height="28px" viewBox="0 0 24 24" aria-labelledby="downloadIconTitle" stroke="#DF9B6D" stroke-width="1" stroke-linecap="square" stroke-linejoin="miter" fill="none" color="#DF9B6D"> <title id="downloadIconTitle">Download</title> <path d="M12,3 L12,16"/> <polyline points="7 12 12 17 17 12"/> <path d="M20,21 L4,21"/> </svg> Download Profile</a>
+                                    <a id="modalShow" class="button btn-custom-dark show-modal"><svg class="mr-2" width="28px" height="28px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-labelledby="qrIconTitle" stroke="#DF9B6D" stroke-width="1" stroke-linecap="square" stroke-linejoin="miter" color="#DF9B6D"> <title id="qrIconTitle">QR Code</title> <rect x="10" y="3" width="7" height="7" transform="rotate(90 10 3)"/> <rect width="1" height="1" transform="matrix(-1 0 0 1 7 6)"/> <rect x="10" y="14" width="7" height="7" transform="rotate(90 10 14)"/> <rect x="6" y="17" width="1" height="1"/> <rect x="14" y="20" width="1" height="1"/> <rect x="17" y="17" width="1" height="1"/> <rect x="14" y="14" width="1" height="1"/> <rect x="20" y="17" width="1" height="1"/> <rect x="20" y="14" width="1" height="1"/> <rect x="20" y="20" width="1" height="1"/> <rect x="21" y="3" width="7" height="7" transform="rotate(90 21 3)"/> <rect x="17" y="6" width="1" height="1"/> </svg> QR Code</a>
+                                    <a href="{% url 'wireguard:peer-delete' peer.pk %}" class="button btn-delete delete-config"><svg role="img" xmlns="http://www.w3.org/2000/svg" width="28px" height="28px" viewBox="0 0 24 24" aria-labelledby="closeIconTitle" stroke="#DF9B6D" stroke-width="1" stroke-linecap="square" stroke-linejoin="miter" fill="none" color="#DF9B6D"> <title id="closeIconTitle">Close</title> <path d="M6.34314575 6.34314575L17.6568542 17.6568542M6.34314575 17.6568542L17.6568542 6.34314575"/></svg> Delete</a>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <figure class="image is-128x128" style="margin: 0 auto">
+                <img class="text-center" src="{% static 'profiles' %}/{{ peer }}/{{ peer.profile_name }}-qrcode-light.png">
+            </figure>
+        </div>
+        <button id="modalClose" class="modal-close is-large" aria-label="close"></button>
+    </div>
+{% endblock body %}

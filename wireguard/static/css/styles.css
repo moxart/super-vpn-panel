@@ -1,0 +1,629 @@
+* {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+html, body {
+    position: relative;
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    background: #18171b;
+    color: #CCB69B;
+}
+
+::selection {
+    background-color: #892122;
+    color: #ddd;
+}
+
+div.notification-copied {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    display: none;
+    padding: 1rem;
+    border-radius: 3px;
+    background-color: #222;
+    color: #4a4a4a;
+    font-size: 12px;
+    z-index: 100;
+}
+
+nav.navbar a.btn-add-peer {
+    background-color: #333;
+    color: #777;
+    border: none;
+}
+
+nav.navbar a.btn-add-peer svg {
+    vertical-align: sub;
+    stroke: #777;
+}
+
+nav.navbar a.btn-add-peer:hover,
+nav.navbar a.btn-add-peer:active,
+nav.navbar a.btn-add-peer:focus {
+    background-color: #000000;
+    color: #ddd;
+}
+
+nav.navbar a.btn-add-peer:hover svg,
+nav.navbar a.btn-add-peer:active svg,
+nav.navbar a.btn-add-peer:focus svg {
+    stroke: #ddd;
+}
+
+div.server-new .field .label {
+    color: #DF9B6D;
+}
+
+div.server-new .field span.icon {
+    color: #868784;
+}
+
+div.server-new input[type="text"] {
+    background-color: #111;
+    color: #868784;
+    border-color: #111;
+}
+
+div.server-new textarea {
+    background-color: #111;
+    color: #868784;
+    border-color: #111;
+}
+
+div.server-new textarea:hover,
+div.server-new textarea:focus,
+div.server-new textarea:active {
+    box-shadow: none;
+    border-color: #111;
+}
+
+div.server-new input[type="number"] {
+    background-color: #111;
+    color: #868784;
+    border-color: #111;
+}
+
+div.server-new input[type="text"]:hover,
+div.server-new input[type="text"]:focus {
+    box-shadow: none;
+}
+
+@media (max-width: 1200px) {
+    #navbarWireguard {
+        background-color: #0a0a0a;
+    }
+
+    #navbarWireguard a.navbar-link:hover,
+    #navbarWireguard a.navbar-link:focus,
+    #navbarWireguard a.navbar-link:active {
+        background-color: #000;
+        color: #fff;
+    }
+
+    #navbarWireguard a.navbar-item:hover,
+    #navbarWireguard a.navbar-item:focus,
+    #navbarWireguard a.navbar-item:active {
+        background-color: #000;
+        color: #fff;
+    }
+}
+
+/* ========================================================================================
+= Global ==================================================================================
+======================================================================================== */
+
+.btn-custom-dark {
+    background-color: #0a0a0a;
+    color: #4a4a4a;
+    border: none;
+}
+
+.btn-custom-dark svg {
+    stroke: #DF9B6D;
+}
+
+.btn-custom-dark:hover,
+.btn-custom-dark:focus {
+    background-color: #111111;
+}
+
+.btn-generate-peer {
+    background-color: #DF9B6D;
+    border: none;
+}
+
+.btn-generate-peer:hover,
+.btn-generate-peer:focus {
+    background-color: #FCAA67;
+}
+
+.btn-generate-server {
+    background-color: #DF9B6D;
+    border: none;
+}
+
+.btn-generate-server svg {
+    margin-right: 5px;
+}
+
+.btn-generate-server:hover,
+.btn-generate-server:focus {
+    background-color: #FCAA67;
+}
+
+.btn-regenerate-server {
+    background-color: #0a0a0a;
+    border: none;
+}
+
+.btn-regenerate-server svg {
+    margin-right: 5px;
+}
+
+.btn-regenerate-server:hover,
+.btn-regenerate-server:focus {
+    background-color: #111111;
+}
+
+.btn-cancel {
+    float: right;
+    background-color: #0a0a0a;
+    color: #363636;
+    border: none;
+}
+
+.btn-cancel:hover,
+.btn-cancel:focus {
+    background-color: #111111;
+}
+
+.btn-delete {
+    float: right;
+    background-color: #FA003F;
+    color: #fff;
+    border: none;
+}
+
+.btn-delete svg {
+    stroke: #fff;
+}
+
+.btn-delete:hover,
+.btn-delete:focus {
+    background-color: #c90032;
+    color: #fff;
+}
+
+div.pre-config {
+    position: relative;
+}
+
+div.pre-config pre {
+    background-color: #111;
+    color: #4a4a4a;
+    border: 1px solid rgba(223, 155, 109, .1);
+    text-shadow: 1px 1px 0 #000;
+    border-radius: 4px;
+}
+
+button.copy-clipboard {
+    position: absolute;
+    padding: 0;
+    right: 10px;
+    top: 10px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+button.copy-clipboard svg:hover,
+button.copy-clipboard svg:focus {
+    stroke: #333;
+}
+
+div.qr img {
+    border-radius: 10px;
+}
+
+div.qr {
+    display: flex;
+}
+
+.checkbox {
+    font-size: .75rem;
+    font-weight: 700;
+    color: #DF9B6D;
+}
+
+input[type="checkbox"] {
+    vertical-align: text-top;
+    margin-right: 4px;
+}
+
+@media (max-width: 575.98px) {
+    .btn-custom-dark {
+        width: 100% !important;
+        margin-bottom: 10px;
+    }
+
+    .btn-generate-peer {
+        width: 100% !important;
+    }
+
+    .btn-generate-server {
+        width: 100% !important;
+    }
+
+    .btn-regenerate-server {
+        width: 100% !important;
+    }
+
+    .btn-delete {
+        width: 100% !important;
+    }
+
+    a.btn-cancel {
+        width: 100%;
+    }
+}
+
+
+/* ========================================================================================
+= Wireguard Home ==========================================================================
+======================================================================================== */
+
+div.wireguard-home {
+    flex: 1;
+}
+
+/* latest peers */
+
+div.wireguard-home div.peer {
+    position: relative;
+}
+
+div.wireguard-home div.peer .tag-server {
+    position: absolute;
+    right: 10px;
+    top: -11px;
+    font-size: 11px;
+    font-weight: 600;
+    background: #111;
+    border: 1px solid rgba(223, 155, 109, .1);
+    padding: 2px 5px;
+    border-radius: 4px;
+    box-shadow: 1px 1px 0 rgba(0, 0, 0, .6);
+}
+
+div.wireguard-home div.peer:hover .tag-server,
+div.wireguard-home div.peer:focus .tag-server,
+div.wireguard-home div.peer:active .tag-server {
+    background-color: #DF9B6D;
+    color: #111;
+}
+
+div.wireguard-home div.peer {
+    padding: .75rem;
+    background-color: #111;
+    box-shadow: none;
+}
+
+div.wireguard-home div.peer:hover,
+div.wireguard-home div.peer:focus,
+div.wireguard-home div.peer:active {
+    background-color: #010101;
+}
+
+div.wireguard-home div.peer .image img {
+    border-radius: 6px;
+}
+
+div.wireguard-home div.peer .content {
+    font-size: 13px;
+}
+
+div.wireguard-home div.peer .content strong {
+    font-size: 16px;
+    color: #DF9B6D;
+}
+
+div.wireguard-home div.peer .content time {
+    color: #CCB69B !important;
+}
+
+div.wireguard-home div.peer .content span {
+    color: #CCB69B !important;
+}
+
+div.wireguard-home div.latest-clients {
+    box-shadow: none;
+}
+
+div.wireguard-home div.latest-clients p.panel-heading {
+    background-color: #292F36 !important;
+    color: #DF9B6D;
+    text-shadow: 1px 1px 0 #000;
+}
+
+div.wireguard-home div.latest-clients a.panel-block {
+    background-color: #0a0a0a;
+    color: #CCB69B;
+    border-color: #000;
+}
+
+div.wireguard-home div.latest-clients a.panel-block:hover,
+div.wireguard-home div.latest-clients a.panel-block:focus,
+div.wireguard-home div.latest-clients a.panel-block:active {
+    background-color: #000;
+}
+
+/* latest servers */
+div.wireguard-home div.server {
+    position: relative;
+}
+
+div.wireguard-home div.server .tag-remove {
+    position: absolute;
+    right: 10px;
+    top: -11px;
+    font-size: 11px;
+    font-weight: 600;
+    background: #111;
+    border: 1px solid rgba(223, 155, 109, .1);
+    border-radius: 4px;
+    box-shadow: 1px 1px 0 rgba(0, 0, 0, .6);
+}
+
+div.wireguard-home div.server .tag-remove svg {
+    margin-right: 0;
+}
+
+div.wireguard-home div.server:hover .tag-remove,
+div.wireguard-home div.server:focus .tag-remove,
+div.wireguard-home div.server:active .tag-remove {
+    background-color: #FA003F;
+    color: #111;
+}
+
+div.wireguard-home div.server:hover .tag-remove svg,
+div.wireguard-home div.server:focus .tag-remove svg,
+div.wireguard-home div.server:active .tag-remove svg {
+    stroke: #fff;
+}
+
+div.wireguard-home div.server {
+    padding: .75rem;
+    background-color: #111;
+    box-shadow: none;
+}
+
+div.wireguard-home div.server:hover,
+div.wireguard-home div.server:focus,
+div.wireguard-home div.server:active {
+    background-color: #010101;
+}
+
+div.wireguard-home div.server .image img {
+    border-radius: 6px;
+}
+
+div.wireguard-home div.server .content {
+    font-size: 13px;
+}
+
+div.wireguard-home div.server .content strong {
+    font-size: 16px;
+    color: #DF9B6D;
+}
+
+div.wireguard-home div.server .content time {
+    color: #CCB69B !important;
+}
+
+div.wireguard-home div.server .content span {
+    color: #CCB69B !important;
+}
+
+div.wireguard-home div.latest-clients h4,
+div.wireguard-home div.latest-servers h4{
+    color: #CCB69B;
+}
+
+div.wireguard-home div.latest-clients svg,
+div.wireguard-home div.latest-servers svg {
+    margin-right: .25rem;
+    vertical-align: top;
+}
+
+div.wireguard-home div.latest-clients p.panel-heading {
+    background-color: #292F36 !important;
+    color: #DF9B6D;
+    text-shadow: 1px 1px 0 #000;
+}
+
+div.wireguard-home div.latest-clients a.panel-block {
+    background-color: #0a0a0a;
+    color: #CCB69B;
+    border-color: #000;
+}
+
+div.wireguard-home div.latest-clients a.panel-block:hover,
+div.wireguard-home div.latest-clients a.panel-block:focus,
+div.wireguard-home div.latest-clients a.panel-block:active {
+    background-color: #000;
+}
+
+/* ========================================================================================
+= Add New Peer ============================================================================
+======================================================================================== */
+
+h3 {
+    color: #DF9B6D;
+    font-weight: 700;
+}
+
+div.add-peer .field .label {
+    color: #DF9B6D;
+}
+
+div.add-peer .field span.icon {
+    color: #868784;
+}
+
+div.add-peer input[type="text"] {
+    background-color: #111;
+    color: #868784;
+    border-color: #191716;
+}
+
+div.add-peer input[type="text"]:hover,
+div.add-peer input[type="text"]:focus {
+    box-shadow: none;
+}
+
+div.add-peer select {
+    background-color: #111;
+    color: #868784;
+    border: none;
+}
+
+.select:not(:hover)::after {
+    border-color: #DF9B6D !important;
+}
+
+div.add-peer select:hover,
+div.add-peer select:focus,
+div.add-peer select:active {
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* ========================================================================================
+= Result Peer =============================================================================
+======================================================================================== */
+
+div.peer-detail .field .label {
+    color: #DF9B6D;
+    text-transform: uppercase;
+}
+
+div.peer-detail input[type="text"] {
+    background-color: #111;
+    color: #868784;
+    border-color: #191716;
+}
+
+div.peer-detail input[type="text"]:hover,
+div.peer-detail input[type="text"]:focus {
+    box-shadow: none;
+}
+
+/* ========================================================================================
+= Peers ==============================================================================
+======================================================================================== */
+
+div.peers-list time {
+    font-size: 13px;
+}
+
+div.peers-list div.profile_name svg {
+    vertical-align: middle;
+}
+
+div.peers-list div.peers div.peer h3 {
+    color: #DF9B6D;
+    text-transform: uppercase;
+}
+
+div.peers-list div.peers div.peer li {
+    font-weight: 600;
+}
+
+div.peers-list div.peers div.peer li span {
+    color: #896A67;
+    font-weight: normal;
+}
+
+div.peers-list .item {
+    display: none;
+}
+
+div.qr {
+    display: none;
+}
+
+div.peers-list div.peer-config {
+    position: relative;
+}
+
+div.peers-list div.peer-config button.copy-clipboard {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+/* ========================================================================================
+= Peer Detail =============================================================================
+======================================================================================== */
+
+div.peer-detail div.peer-config {
+    position: relative;
+}
+
+div.peer-detail div.peer-config button.copy-clipboard {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+div.peer-detail div.peer-config button.copy-clipboard svg:hover,
+div.peer-detail div.peer-config button.copy-clipboard svg:focus {
+    stroke: #333;
+}
+
+/* ========================================================================================
+= Confirm Delete ==========================================================================
+======================================================================================== */
+
+/* ========================================================================================
+= Add New Server ==========================================================================
+======================================================================================== */
+
+/* ========================================================================================
+= Footer ==================================================================================
+======================================================================================== */
+
+footer {
+    padding: 3rem 1.5rem !important;
+    background-color: transparent !important;
+    color: #CCB69B !important;
+    text-transform: capitalize;
+    font-size: 13px;
+    text-shadow: 1px 1px 0 #000;
+}
+
+footer a {
+    color: #DF9B6D;
+}
+
+footer strong {
+    color: #DF9B6D;
+}
+
+footer a:hover,
+footer a:focus {
+    color: #fff;
+}

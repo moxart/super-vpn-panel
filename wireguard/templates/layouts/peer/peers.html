@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %} Peers {% endblock title %}
+
+{% block body %}
+    {% include 'includes/navbar.html' %}
+    <div class="section peers-list">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-12">
+                    <div class="columns">
+                        <div class="column is-6 pb-6">
+                            <h3 class="is-size-4">Peers</h3>
+                        </div>
+                    </div>
+                    {% if peers %}
+                        <div class="columns peers mt-5 is-multiline is-full">
+                            {% for peer in peers %}
+                                <div class="column mb-5 is-half-desktop peer">
+                                    <div class="profile_name">
+                                        <a href="{% url 'wireguard:peer-detail' peer.pk %}"><h3 class="is-size-4 mb-4">{{ peer.profile_name }}</h3></a>
+                                    </div>
+                                    <span><time>{{ peer.created_at }}</time></span>
+                                    <div class="qr my-4">
+                                        <img src="{% static 'profiles' %}/{{ peer }}/{{ peer.profile_name }}-qrcode-light.png" alt="">
+                                    </div>
+                                    <ul>
+                                        <li>Server: <span>{{ peer.server }}</span></li>
+                                        <li>IP Address: <span>{{ peer.address }}</span></li>
+                                        <li>Email: <span>{{ peer.email }}</span></li>
+                                        <li>Listen Port: <span>{{ peer.listen_port }}</span></li>
+                                        <li>Private Key: <span>{{ peer.private_key }}</span></li>
+                                        <li>Public Key: <span>{{ peer.public_key }}</span></li>
+                                        <li>Preshared Key: <span>{{ peer.preshared_key }}</span></li>
+                                    </ul>
+                                    <div class="extra mt-5">
+                                        <button class="button btn-custom-dark show-config mb-2" type="button"><svg class="mr-2" width="28px" height="28px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-labelledby="eyeIconTitle" stroke="#DF9B6D" stroke-width="1" stroke-linecap="square" stroke-linejoin="miter" fill="none" color="#DF9B6D"> <title id="eyeIconTitle">Visible (eye)</title> <path d="M22 12C22 12 19 18 12 18C5 18 2 12 2 12C2 12 5 6 12 6C19 6 22 12 22 12Z"/> <circle cx="12" cy="12" r="3"/> </svg> <span>Show Config</span></button>
+                                        <button class="button btn-custom-dark show-qrcode mb-2" type="button"><svg class="mr-2" width="28px" height="28px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-labelledby="qrIconTitle" stroke="#DF9B6D" stroke-width="1" stroke-linecap="square" stroke-linejoin="miter" color="#DF9B6D"> <title id="qrIconTitle">QR Code</title> <rect x="10" y="3" width="7" height="7" transform="rotate(90 10 3)"/> <rect width="1" height="1" transform="matrix(-1 0 0 1 7 6)"/> <rect x="10" y="14" width="7" height="7" transform="rotate(90 10 14)"/> <rect x="6" y="17" width="1" height="1"/> <rect x="14" y="20" width="1" height="1"/> <rect x="17" y="17" width="1" height="1"/> <rect x="14" y="14" width="1" height="1"/> <rect x="20" y="17" width="1" height="1"/> <rect x="20" y="14" width="1" height="1"/> <rect x="20" y="20" width="1" height="1"/> <rect x="21" y="3" width="7" height="7" transform="rotate(90 21 3)"/> <rect x="17" y="6" width="1" height="1"/> </svg> <span>Show QR Code</span></button>
+                                        <a href="{% static 'tars' %}/{{ peer }}.tar.gz" class="button btn-custom-dark download-config mb-2" type="button"><svg class="mr-2" role="img" xmlns="http://www.w3.org/2000/svg" width="28px" height="28px" viewBox="0 0 24 24" aria-labelledby="downloadIconTitle" stroke="#DF9B6D" stroke-width="1" stroke-linecap="square" stroke-linejoin="miter" fill="none" color="#DF9B6D"> <title id="downloadIconTitle">Download</title> <path d="M12,3 L12,16"/> <polyline points="7 12 12 17 17 12"/> <path d="M20,21 L4,21"/> </svg> Download</a>
+                                        <div class="columns">
+                                            <div class="column is-full">
+                                                <div class="pre-config mt-3 item">
+                    <pre id="{{ peer.profile_name }}">
+[Interface]
+Address = {{ peer.address }}
+PrivateKey = {{ peer.private_key }}DNS = {{ peer.dns }}
+
+[Peer]
+PublicKey = {{ peer.server.public_key }}
+AllowedIPs = {{ peer.allowed_ips }}
+Endpoint = {{ peer.endpoint }}:{{ peer.listen_port }}</pre>
+                                                    <button class="copy-clipboard" data-clipboard-target="#{{ peer.profile_name }}"><svg role="img" xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24" aria-labelledby="copyIconTitle" stroke="#DF9B6D" stroke-width="1" stroke-linecap="square" stroke-linejoin="miter" fill="none" color="#DF9B6D"> <title id="copyIconTitle">Copy</title> <rect width="12" height="14" x="8" y="7"/> <polyline points="16 3 4 3 4 17"/></svg></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="columns">
+                            <div class="column is-half-desktop">
+                                <div class="message is-warning warning-server">
+                                    <div class="message-header">
+                                        <p>Warning</p>
+                                    </div>
+                                    <div class="message-body">
+                                        <span class="is-size-5">There are no server keys has generated yet.</span>
+                                        <br><br>
+                                        <a href="{% url 'wireguard:peer-new' %}" class="button btn-custom-dark">Add Peer</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock body %}

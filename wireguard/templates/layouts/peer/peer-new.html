@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %} New Peer {% endblock title %}
+
+{% block body %}
+    {% include 'includes/navbar.html' %}
+    <div class="section add-peer">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-12">
+                    <div class="columns">
+                        <div class="column is-5 is-12-touch">
+                            <h3 class="is-size-4">Add New Peer</h3>
+                            <br>
+                            {% if not interfaces %}
+                                <div class="message is-warning warning-generate">
+                                    <div class="message-header">
+                                        <p>Warning</p>
+                                    </div>
+                                    <div class="message-body">
+                                        <span class="is-size-5">There are no server keys has generated yet.</span>
+                                        <br><br>
+                                        <a href="{% url 'wireguard:server-new' %}" class="button btn-custom-dark">Generate Keys</a>
+                                    </div>
+                                </div>
+                            {% else %}
+                                {% if form %}
+                                    <form action="" method="post">
+                                        {% csrf_token %}
+
+                                        {% for field in form %}
+                                            {% if field.label == 'Server' %}
+                                                <div class="field">
+                                                    <div class="control">
+                                                        <label class="label help" for="{{ field.auto_id }}">{{ field.label }}</label>
+                                                        <div class="select">
+                                                            {{ field }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% else %}
+                                                <div class="field">
+                                                    <label class="label help" for="{{ field.auto_id }}">{{ field.label }}</label>
+                                                    {{ field }}
+                                                </div>
+                                            {% endif %}
+                                        {% endfor %}
+
+                                        <br>
+
+                                        <button type="submit" class="button btn-generate-peer mb-3">Generate</button>
+                                        <a href="{% url 'wireguard:home' %}" class="button btn-cancel">Cancel</a>
+                                    </form>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock body %}
