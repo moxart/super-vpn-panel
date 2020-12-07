@@ -36,12 +36,14 @@ class ServerNewView(FormView):
         initial = super().get_initial()
 
         os.system("mkdir -p {} && umask 077 {}"
-                  .format(settings.WIREGUARD_SERVER_KEYS, settings.WIREGUARD_SERVER_KEYS))
-        os.system("wg genkey | tee {}/private_key | wg pubkey | tee {}/public_key"
-                  .format(settings.WIREGUARD_SERVER_KEYS, settings.WIREGUARD_SERVER_KEYS))
+                  .format(settings.WIREUGARD_TMP, settings.WIREUGARD_TMP))
+        os.system("wg genkey | tee {}/server_private_key | wg pubkey | tee {}/server_public_key"
+                  .format(settings.WIREUGARD_TMP, settings.WIREUGARD_TMP))
 
-        private_key = os.popen('cat {}/private_key'.format(settings.WIREGUARD_SERVER_KEYS)).read()
-        public_key = os.popen('cat {}/public_key'.format(settings.WIREGUARD_SERVER_KEYS)).read()
+        private_key = os.popen(
+            'cat {}/server_private_key'.format(settings.WIREUGARD_TMP)).read()
+        public_key = os.popen(
+            'cat {}/server_public_key'.format(settings.WIREUGARD_TMP)).read()
 
         initial['interface'] = "wg0"
         initial['post_up'] = "iptables -A FORWARD -i %i -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE"
@@ -71,13 +73,16 @@ class ServerNewView(FormView):
 
         server.save()
 
-        os.system('echo {} >> {}server.{}.key'.format(private_key, settings.WIREGUARD_SERVER_KEYS, interface))
-        os.system('echo {} >> {}server.{}.pub'.format(public_key, settings.WIREGUARD_SERVER_KEYS, interface))
+        os.system('echo {} >> {}server.{}.key'.format(
+            private_key, settings.WIREGUARD_SERVER_KEYS, interface))
+        os.system('echo {} >> {}server.{}.pub'.format(
+            public_key, settings.WIREGUARD_SERVER_KEYS, interface))
 
         os.system('echo [Interface] "\n"Address = {} "\n"PrivateKey = {} "\n"ListenPort = {} "\n"PostUp = "{}" '
                   '"\n"PostDown = "{}" "\n"SaveConifg = {} >> {}{}.conf'.format(address, private_key, listen_port,
-                                                                                str(post_up), str(post_down),
-                                                                                save_config, settings.WG_CONF,
+                                                                                str(post_up), str(
+                                                                                    post_down),
+                                                                                save_config, settings.WIREGUARD_SERVER_CONF,
                                                                                 interface))
 
         os.system('rm -rf {}private_key'.format(settings.WIREGUARD_SERVER_KEYS))
@@ -98,8 +103,10 @@ class ServerSubsetView(generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['peers'] = Peer.objects.filter(server__interface=self.kwargs['interface'])
-        context['server'] = Server.objects.get(interface=self.kwargs['interface'])
+        context['peers'] = Peer.objects.filter(
+            server__interface=self.kwargs['interface'])
+        context['server'] = Server.objects.get(
+            interface=self.kwargs['interface'])
         return context
 
 
@@ -118,6 +125,7 @@ class PeerNewView(FormView):
         initial = super().get_initial()
         initial['dns'] = '1.1.1.1, 1.0.0.1'
         initial['allowed_ips'] = '0.0.0.0/0, ::/0'
+
         return initial
 
     def form_valid(self, form):
@@ -129,27 +137,34 @@ class PeerNewView(FormView):
 
         peer_path = os.path.join(settings.WG_PROFILES, peer)
 
-        os.system("wg genkey | tee {}-private | wg pubkey > {}-public".format(peer_path + "/" + peer, peer_path + "/" + peer))
+        os.system("wg genkey | tee {}-private | wg pubkey > {}-public".format(
+            peer_path + "/" + peer, peer_path + "/" + peer))
         os.system("wg genpsk > {}-preshared".format(peer_path + "/" + peer))
 
-        private_key = os.popen('cat {}-private'.format(peer_path + "/" + peer)).read()
-        public_key = os.popen('cat {}-public'.format(peer_path + "/" + peer)).read()
-        preshared_key = os.popen('cat {}-preshared'.format(peer_path + "/" + peer)).read()
+        private_key = os.popen(
+            'cat {}-private'.format(peer_path + "/" + peer)).read()
+        public_key = os.popen(
+            'cat {}-public'.format(peer_path + "/" + peer)).read()
+        preshared_key = os.popen(
+            'cat {}-preshared'.format(peer_path + "/" + peer)).read()
 
         os.system('echo [Interface] "\n"Address = {} "\n"PrivateKey = {} "\n"DNS = {} "\n\n"[Peer] "\n"PublicKey = {} '
                   '"\n"PresharedKey = {} "\n"AllowedIPs = {} "\n"Endpoint = {}:{} >> {}.conf'.format(
-            form.cleaned_data['address'], private_key.strip(), form.cleaned_data['dns'], public_key.strip(),
-            preshared_key.strip(), form.cleaned_data['allowed_ips'].strip(), server.endpoint, server.listen_port,
-            peer_path + "/" + peer))
+                      form.cleaned_data['address'], private_key.strip(
+                      ), form.cleaned_data['dns'], public_key.strip(),
+                      preshared_key.strip(), form.cleaned_data['allowed_ips'].strip(
+                      ), server.endpoint, server.listen_port,
+                      peer_path + "/" + peer))
 
-        os.system("qrencode --foreground=111111 --background=896A67 -o {}-qrcode-dark.png < {}.conf".format(peer_path + "/" + peer, peer_path + "/" + peer))
-        os.system("qrencode -o {}-qrcode-light.png < {}.conf".format(peer_path + "/" + peer, peer_path + "/" + peer))
+        os.system("qrencode --foreground=111111 --background=896A67 -o {}-qrcode-dark.png < {}.conf".format(
+            peer_path + "/" + peer, peer_path + "/" + peer))
+        os.system("qrencode -o {}-qrcode-light.png < {}.conf".format(peer_path +
+                                                                     "/" + peer, peer_path + "/" + peer))
 
         with tarfile.open(peer + ".tar.gz", "w:gz") as tar:
             tar.add(peer_path, arcname=os.path.basename(peer_path))
 
         os.system("mv {} {}".format(peer + ".tar.gz", settings.WIREGUARD_TARS))
-
 
         obj = Peer()
 
@@ -166,6 +181,20 @@ class PeerNewView(FormView):
         obj.server = form.cleaned_data['server']
 
         obj.save()
+
+        os.system('echo {} >> {}peer.{}.key'.format(
+            private_key.strip(), settings.WIREGUARD_PEER_KEYS, peer))
+        os.system('echo {} >> {}peer.{}.pub'.format(
+            public_key.strip(), settings.WIREGUARD_PEER_KEYS, peer))
+        os.system('echo {} >> {}peer.{}.pre'.format(
+            preshared_key.strip(), settings.WIREGUARD_PEER_KEYS, peer))
+
+        os.system('echo [Interface] "\n"Address = {} "\n"PrivateKey = {} "\n"DNS = {} "\n\n"[Peer] "\n"PublicKey = {} '
+                  '"\n"PresharedKey = {} "\n"AllowedIPs = {} "\n"Endpoint = {}:{} >> {}{}.conf'.format(
+                      form.cleaned_data['address'], private_key.strip(
+                      ), form.cleaned_data['dns'], public_key.strip(),
+                      preshared_key.strip(), form.cleaned_data['allowed_ips'].strip(
+                      ), server.endpoint, server.listen_port, settings.WIREGUARD_PEER_CONF, peer))
 
         return super().form_valid(form)
 

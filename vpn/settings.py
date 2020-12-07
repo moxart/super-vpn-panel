@@ -119,10 +119,12 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
-
 STATIC_URL = '/static/'
 WG_PROFILES = os.path.join(BASE_DIR, 'wireguard/static/profiles/')
-WG_CONF = os.path.join(BASE_DIR, 'wireguard/wg-conf/conf/')
-WIREGUARD_SERVER_KEYS = os.path.join(BASE_DIR, 'wireguard/wg-conf/keys/server/')
-WIREGUARD_PEER_KEYS = os.path.join(BASE_DIR, 'wireguard/wg-conf/keys/peer/')
+WG_CONF = os.path.join(BASE_DIR, 'wireguard/wg-configs/conf/')
+WIREUGARD_TMP = os.path.join(BASE_DIR, 'wireguard/tmp/')
+WIREGUARD_SERVER_KEYS = os.path.join(BASE_DIR, 'wireguard/wg-configs/server/')
+WIREGUARD_SERVER_CONF = os.path.join(BASE_DIR, 'wireguard/wg-configs/server/conf/')
+WIREGUARD_PEER_KEYS = os.path.join(BASE_DIR, 'wireguard/wg-configs/peer/')
+WIREGUARD_PEER_CONF = os.path.join(BASE_DIR, 'wireguard/wg-configs/peer/conf/')
 WIREGUARD_TARS = os.path.join(BASE_DIR, 'wireguard/static/tars/')
