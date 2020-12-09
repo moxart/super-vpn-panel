@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'wireguard',
+    'accounts',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -128,3 +129,6 @@ WIREGUARD_SERVER_CONF = os.path.join(BASE_DIR, 'wireguard/wg-configs/server/conf
 WIREGUARD_PEER_KEYS = os.path.join(BASE_DIR, 'wireguard/wg-configs/peer/')
 WIREGUARD_PEER_CONF = os.path.join(BASE_DIR, 'wireguard/wg-configs/peer/conf/')
 WIREGUARD_TARS = os.path.join(BASE_DIR, 'wireguard/static/tars/')
+
+LOGIN_REDIRECT_URL = '/svp/login'
+LOGIN_URL = '/svp/login'

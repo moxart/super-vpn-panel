@@ -2,6 +2,14 @@ import os
 import tarfile
 import random
 
+from django.views.generic import RedirectView
+from django.contrib.auth.models import User
+from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from django.views.generic import TemplateView
+from django.http import HttpResponseRedirect
+
 from django.urls import reverse_lazy
 from django.conf import settings
 from django.views import generic
@@ -13,6 +21,7 @@ from .forms.ServerNewForm import ServerNewForm
 from django.views.generic.edit import FormView, DeleteView
 
 
+@method_decorator(login_required, name='dispatch')
 class HomeView(generic.ListView):
     model = Server
     template_name = 'layouts/home.html'
@@ -27,10 +36,11 @@ class HomeView(generic.ListView):
         return context
 
 
+@method_decorator(login_required, name='dispatch')
 class ServerNewView(FormView):
     template_name = 'layouts/server/server-new.html'
     form_class = ServerNewForm
-    success_url = '/wireguard/servers/'
+    success_url = '/svp/wireguard/servers'
 
     def get_initial(self):
         initial = super().get_initial()
@@ -91,12 +101,14 @@ class ServerNewView(FormView):
         return super().form_valid(form)
 
 
+@method_decorator(login_required, name='dispatch')
 class ServerListView(generic.ListView):
     model = Server
     template_name = 'layouts/server/servers.html'
     context_object_name = 'servers'
 
 
+@method_decorator(login_required, name='dispatch')
 class ServerSubsetView(generic.ListView):
     model = Server
     template_name = 'layouts/server/server-subset.html'
@@ -110,12 +122,14 @@ class ServerSubsetView(generic.ListView):
         return context
 
 
+@method_decorator(login_required, name='dispatch')
 class ServerDeleteView(generic.DeleteView):
     model = Server
     template_name = 'layouts/server/server-delete.html'
     success_url = reverse_lazy('wireguard:server-list')
 
 
+@method_decorator(login_required, name='dispatch')
 class PeerNewView(FormView):
     template_name = 'layouts/peer/peer-new.html'
     form_class = PeerNewForm
@@ -204,11 +218,13 @@ class PeerNewView(FormView):
         return context
 
 
+@method_decorator(login_required, name='dispatch')
 class PeerDetailView(generic.DetailView):
     model = Peer
     template_name = 'layouts/peer/peer-detail.html'
 
 
+@method_decorator(login_required, name='dispatch')
 class PeerListView(generic.ListView):
     model = Peer
     template_name = 'layouts/peer/peers.html'
@@ -220,6 +236,7 @@ class PeerListView(generic.ListView):
         return context
 
 
+@method_decorator(login_required, name='dispatch')
 class PeerDeleteView(generic.DeleteView):
     model = Peer
     template_name = 'layouts/peer/peer-delete.html'

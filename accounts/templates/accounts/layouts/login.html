@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %} Login | SVP {% endblock title %}
+
+{% block body_class %}dashboard login{% endblock %}
+
+{% block body %}
+    <form class="form-signin" action="#" method="post">
+        {% csrf_token %}
+        <div class="has-text-centered">
+            <a href=""><img src="{% static 'images/super-vpn-panel.png' %}" width="150" height="150" alt="super vpn panel"></a>
+        </div>
+        <div class="control">
+            <h3>Login</h3>
+            {% for field in form %}
+                <label for="{{ form.subject.id_for_label }}" class="label">{{ field.label_tag }}</label>
+                {{ field }}
+            {% endfor %}
+            <br>
+            <button type="submit" class="button is-medium is-fullwidth">Login <i data-feather="arrow-right"></i></button>
+        </div>
+    </form>
+{% endblock body %}

@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path('wireguard/', include('wireguard.urls')),
-    path('admin/', admin.site.urls),
+    path('svp/wireguard/', include('wireguard.urls')),
+    path('svp/', include('accounts.urls')),
+    path('svp/admin/', admin.site.urls),
 ]
