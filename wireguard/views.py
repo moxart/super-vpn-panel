@@ -2,13 +2,8 @@ import os
 import tarfile
 import random
 
-from django.views.generic import RedirectView
-from django.contrib.auth.models import User
-from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.views.generic import TemplateView
-from django.http import HttpResponseRedirect
 
 from django.urls import reverse_lazy
 from django.conf import settings
@@ -61,6 +56,7 @@ class ServerNewView(FormView):
             'post_down'] = "iptables -D FORWARD -i %i -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE"
         initial['private_key'] = private_key.strip()
         initial['public_key'] = public_key.strip()
+        initial['address'] = '10.0.0.1/24'
         initial['listen_port'] = random.randint(49152, 65535)
 
         return initial
@@ -89,9 +85,9 @@ class ServerNewView(FormView):
             public_key, settings.WIREGUARD_SERVER_KEYS, interface))
 
         os.system('echo [Interface] "\n"Address = {} "\n"PrivateKey = {} "\n"ListenPort = {} "\n"PostUp = "{}" '
-                  '"\n"PostDown = "{}" "\n"SaveConifg = {} >> {}{}.conf'.format(address, private_key, listen_port,
+                  '"\n"PostDown = "{}" "\n"SaveConfig = {} >> {}{}.conf'.format(address, private_key, listen_port,
                                                                                 str(post_up), str(
-                                                                                    post_down),
+                post_down),
                                                                                 save_config, settings.WIREGUARD_SERVER_CONF,
                                                                                 interface))
 
@@ -138,6 +134,7 @@ class PeerNewView(FormView):
     def get_initial(self):
         initial = super().get_initial()
         initial['dns'] = '1.1.1.1, 1.0.0.1'
+        initial['address'] = '10.0.0.2/24'
         initial['allowed_ips'] = '0.0.0.0/0, ::/0'
 
         return initial
@@ -164,11 +161,11 @@ class PeerNewView(FormView):
 
         os.system('echo [Interface] "\n"Address = {} "\n"PrivateKey = {} "\n"DNS = {} "\n\n"[Peer] "\n"PublicKey = {} '
                   '"\n"PresharedKey = {} "\n"AllowedIPs = {} "\n"Endpoint = {}:{} >> {}.conf'.format(
-                      form.cleaned_data['address'], private_key.strip(
-                      ), form.cleaned_data['dns'], public_key.strip(),
-                      preshared_key.strip(), form.cleaned_data['allowed_ips'].strip(
-                      ), server.endpoint, server.listen_port,
-                      peer_path + "/" + peer))
+            form.cleaned_data['address'], private_key.strip(
+            ), form.cleaned_data['dns'], public_key.strip(),
+            preshared_key.strip(), form.cleaned_data['allowed_ips'].strip(
+            ), server.endpoint, server.listen_port,
+            peer_path + "/" + peer))
 
         os.system("qrencode --foreground=111111 --background=896A67 -o {}-qrcode-dark.png < {}.conf".format(
             peer_path + "/" + peer, peer_path + "/" + peer))
@@ -205,10 +202,10 @@ class PeerNewView(FormView):
 
         os.system('echo [Interface] "\n"Address = {} "\n"PrivateKey = {} "\n"DNS = {} "\n\n"[Peer] "\n"PublicKey = {} '
                   '"\n"PresharedKey = {} "\n"AllowedIPs = {} "\n"Endpoint = {}:{} >> {}{}.conf'.format(
-                      form.cleaned_data['address'], private_key.strip(
-                      ), form.cleaned_data['dns'], public_key.strip(),
-                      preshared_key.strip(), form.cleaned_data['allowed_ips'].strip(
-                      ), server.endpoint, server.listen_port, settings.WIREGUARD_PEER_CONF, peer))
+            form.cleaned_data['address'], private_key.strip(
+            ), form.cleaned_data['dns'], public_key.strip(),
+            preshared_key.strip(), form.cleaned_data['allowed_ips'].strip(
+            ), server.endpoint, server.listen_port, settings.WIREGUARD_PEER_CONF, peer))
 
         return super().form_valid(form)
 
