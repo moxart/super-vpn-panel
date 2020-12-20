@@ -23,8 +23,9 @@ class HomeView(generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['peers'] = Peer.objects.all()[:5]
-        context['servers'] = Server.objects.all()[:5]
+
+        context['peers'] = Peer.objects.all().order_by('-created_at')[:5]
+        context['servers'] = Server.objects.all().order_by('-created_at')[:5]
         context['peer_count'] = Peer.objects.all().count()
         context['server_count'] = Server.objects.all().count()
 
@@ -88,7 +89,8 @@ class ServerNewView(FormView):
                   '"\n"PostDown = "{}" "\n"SaveConfig = {} >> {}{}.conf'.format(address, private_key, listen_port,
                                                                                 str(post_up), str(
                 post_down),
-                                                                                save_config, settings.WIREGUARD_SERVER_CONF,
+                                                                                save_config,
+                                                                                settings.WIREGUARD_SERVER_CONF,
                                                                                 interface))
 
         os.system('rm -rf {}private_key'.format(settings.WIREGUARD_SERVER_KEYS))
@@ -148,23 +150,23 @@ class PeerNewView(FormView):
 
         peer_path = os.path.join(settings.WG_PROFILES, peer)
 
-        os.system("wg genkey | tee {}-private | wg pubkey > {}-public".format(
-            peer_path + "/" + peer, peer_path + "/" + peer))
+        os.system("wg genkey | tee {}-private | wg pubkey > {}-public"
+                  .format(peer_path + "/" + peer, peer_path + "/" + peer))
         os.system("wg genpsk > {}-preshared".format(peer_path + "/" + peer))
 
-        private_key = os.popen(
-            'cat {}-private'.format(peer_path + "/" + peer)).read()
-        public_key = os.popen(
-            'cat {}-public'.format(peer_path + "/" + peer)).read()
-        preshared_key = os.popen(
-            'cat {}-preshared'.format(peer_path + "/" + peer)).read()
+        private_key = os.popen('cat {}-private'.format(peer_path + "/" + peer)).read()
+        public_key = os.popen('cat {}-public'.format(peer_path + "/" + peer)).read()
+        preshared_key = os.popen('cat {}-preshared'.format(peer_path + "/" + peer)).read()
 
         os.system('echo [Interface] "\n"Address = {} "\n"PrivateKey = {} "\n"DNS = {} "\n\n"[Peer] "\n"PublicKey = {} '
                   '"\n"PresharedKey = {} "\n"AllowedIPs = {} "\n"Endpoint = {}:{} >> {}.conf'.format(
-            form.cleaned_data['address'], private_key.strip(
-            ), form.cleaned_data['dns'], public_key.strip(),
-            preshared_key.strip(), form.cleaned_data['allowed_ips'].strip(
-            ), server.endpoint, server.listen_port,
+            form.cleaned_data['address'],
+            private_key.strip(),
+            form.cleaned_data['dns'],
+            server.public_key,
+            preshared_key.strip(),
+            form.cleaned_data['allowed_ips'].strip(),
+            server.endpoint, server.listen_port,
             peer_path + "/" + peer))
 
         os.system("qrencode --foreground=111111 --background=896A67 -o {}-qrcode-dark.png < {}.conf".format(
@@ -202,10 +204,16 @@ class PeerNewView(FormView):
 
         os.system('echo [Interface] "\n"Address = {} "\n"PrivateKey = {} "\n"DNS = {} "\n\n"[Peer] "\n"PublicKey = {} '
                   '"\n"PresharedKey = {} "\n"AllowedIPs = {} "\n"Endpoint = {}:{} >> {}{}.conf'.format(
-            form.cleaned_data['address'], private_key.strip(
-            ), form.cleaned_data['dns'], public_key.strip(),
-            preshared_key.strip(), form.cleaned_data['allowed_ips'].strip(
-            ), server.endpoint, server.listen_port, settings.WIREGUARD_PEER_CONF, peer))
+            form.cleaned_data['address'],
+            private_key.strip(),
+            form.cleaned_data['dns'],
+            server.public_key,
+            preshared_key.strip(),
+            form.cleaned_data['allowed_ips'].strip(),
+            server.endpoint,
+            server.listen_port,
+            settings.WIREGUARD_PEER_CONF,
+            peer))
 
         return super().form_valid(form)
 
