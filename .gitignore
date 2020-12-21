@@ -6,4 +6,8 @@ __pycache__
 db.sqlite3
 *.sqlite3
 
-tmp
+tmp/
+wireguard/wg-configs/peer/conf/
+wireguard/wg-configs/server/conf/
+wireguard/static/profiles/
+wireguard/static/tars/
