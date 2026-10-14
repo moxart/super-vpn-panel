@@ -76,3 +76,7 @@ The overview maps each server and the peers connected to it. Dashed lines are di
 <img src="screenshots/mobile-home.png" alt="Overview on a phone" width="300">
 
 Fonts: [Bricolage Grotesque](https://github.com/ateliertriay/bricolage) and [JetBrains Mono](https://www.jetbrains.com/lp/mono/), both under the SIL Open Font License and bundled in `wireguard/static/vendor/fonts/`, so the panel makes no external requests.
+
+## License
+
+MIT. See [LICENSE](LICENSE). The bundled fonts are under the SIL Open Font License (see `wireguard/static/vendor/fonts/`).
