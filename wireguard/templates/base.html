@@ -1,0 +1,33 @@
+{% load static %}<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#0a161b">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/favicon/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'images/favicon/site.webmanifest' %}">
+    <link rel="preload" href="{% static 'vendor/fonts/bricolage-grotesque-latin-full.woff2' %}" as="font" type="font/woff2" crossorigin>
+    <title>{% block title %}{% endblock title %} · Super VPN Panel</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+{% if messages %}
+    <div class="toasts" role="status">
+        {% for message in messages %}
+            <div class="toast is-{{ message.tags|default:'info' }}">
+                <p>{{ message }}</p>
+                <button class="toast-close" type="button" aria-label="Dismiss">&times;</button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% block body %}{% endblock body %}
+
+<script src="{% static 'vendor/clipboard/clipboard.min.js' %}"></script>
+<script src="{% static 'js/scripts.js' %}"></script>
+</body>
+</html>

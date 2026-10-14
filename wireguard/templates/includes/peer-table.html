@@ -1,0 +1,16 @@
+<div class="table-wrap">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Peer</th>
+                {% if show_server %}<th scope="col" class="hide-narrow">Server</th>{% endif %}
+                <th scope="col">Address</th>
+                <th scope="col" class="hide-narrow">Status</th>
+                <th scope="col"><span class="visually-hidden">Actions</span></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% include 'includes/peer-rows.html' %}
+        </tbody>
+    </table>
+</div>

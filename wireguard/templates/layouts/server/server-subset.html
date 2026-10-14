@@ -1,0 +1,50 @@
+{% extends 'layouts/app.html' %}
+
+{% block title %}{{ server.interface }}{% endblock title %}
+
+{% block page_head %}
+    <h1 class="page-title is-code">{{ server.interface }}</h1>
+    <p class="page-lede">{{ peers|length }} peer{{ peers|length|pluralize }} on {{ server.network }}, reachable at {{ server.endpoint }}:{{ server.listen_port }}.</p>
+{% endblock page_head %}
+
+{% block page_actions %}
+    <a href="{% url 'wireguard:server-edit' server.pk %}" class="btn">Edit</a>
+    <a href="{% url 'wireguard:server-delete' server.pk %}" class="btn btn-danger">Delete</a>
+    <a href="{% url 'wireguard:peer-new' %}?server={{ server.pk }}" class="btn btn-primary">Add peer</a>
+{% endblock page_actions %}
+
+{% block content %}
+    <section class="section">
+        <dl class="facts">
+            <div><dt>Endpoint</dt><dd class="mono">{{ server.endpoint }}</dd></div>
+            <div><dt>Listen port</dt><dd class="mono">{{ server.listen_port }}</dd></div>
+            <div><dt>Address</dt><dd class="mono">{{ server.address }}</dd></div>
+            <div><dt>Save config</dt><dd>{{ server.save_config|yesno:"On,Off" }}</dd></div>
+            <div class="is-wide"><dt>Public key</dt><dd class="mono">{{ server.public_key }}</dd></div>
+        </dl>
+    </section>
+
+    <section class="section">
+        <div class="section-head">
+            <h2 class="section-title">Peers</h2>
+        </div>
+        {% if peers %}
+            {% include 'includes/peer-table.html' %}
+        {% else %}
+            <div class="empty">
+                <h2>No peers on {{ server.interface }}</h2>
+                <p>Add a phone, laptop or another site. It gets the next free address in {{ server.network }}.</p>
+                <a href="{% url 'wireguard:peer-new' %}?server={{ server.pk }}" class="btn btn-primary">Add peer</a>
+            </div>
+        {% endif %}
+    </section>
+
+    <section class="section">
+        <div class="section-head">
+            <h2 class="section-title">Interface config</h2>
+            <a href="{% url 'wireguard:server-config' server.pk %}" download>Download {{ server.interface }}.conf</a>
+        </div>
+        <p class="prose-muted" style="margin-bottom: 16px">Install it as <code>/etc/wireguard/{{ server.interface }}.conf</code> and run <code>wg-quick up {{ server.interface }}</code>. Disabled peers are left out.</p>
+        {% include 'includes/config-block.html' with config_id='server' config=server_config filename=server.interface|add:'.conf' %}
+    </section>
+{% endblock content %}

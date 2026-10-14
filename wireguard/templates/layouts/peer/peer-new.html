@@ -1,0 +1,46 @@
+{% extends 'layouts/app.html' %}
+
+{% block title %}{% if object %}Edit {{ object.profile_name }}{% else %}Add peer{% endif %}{% endblock title %}
+
+{% block page_head %}
+    <h1 class="page-title">{% if object %}Edit {{ object.profile_name }}{% else %}Add peer{% endif %}</h1>
+    <p class="page-lede">{% if object %}Keys stay the same. If you change the address or DNS, re-share the config.{% else %}Keys are generated for you. Leave the address empty to take the next free one.{% endif %}</p>
+{% endblock page_head %}
+
+{% block content %}
+    {% if not interfaces %}
+        <div class="empty">
+            <h2>Create a server first</h2>
+            <p>Peers connect to a server, so you need at least one before adding devices.</p>
+            <a href="{% url 'wireguard:server-new' %}" class="btn btn-primary">Create a server</a>
+        </div>
+    {% else %}
+        <div class="form-layout">
+            <form class="form" action="" method="post" novalidate>
+                {% csrf_token %}
+                {% include 'includes/form-errors.html' %}
+                <div class="form-row">
+                    {% include 'includes/field.html' with field=form.profile_name %}
+                    {% include 'includes/field.html' with field=form.server %}
+                </div>
+                {% include 'includes/field.html' with field=form.email %}
+                {% include 'includes/field.html' with field=form.address %}
+                {% include 'includes/field.html' with field=form.dns %}
+                {% include 'includes/field.html' with field=form.allowed_ips %}
+                {% include 'includes/field.html' with field=form.persistent_keepalive %}
+                {% include 'includes/field.html' with field=form.enabled %}
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">{% if object %}Save changes{% else %}Add peer{% endif %}</button>
+                    <a href="{% if object %}{% url 'wireguard:peer-detail' object.pk %}{% else %}{% url 'wireguard:peer-list' %}{% endif %}" class="btn btn-quiet">Cancel</a>
+                </div>
+            </form>
+
+            <aside class="form-aside">
+                <h2>Allowed IPs</h2>
+                <p><code>0.0.0.0/0, ::/0</code> sends all of the device's traffic through the VPN. To reach only the VPN subnet, enter that subnet instead.</p>
+                <h2>Persistent keepalive</h2>
+                <p>Set it to 25 for phones and devices behind NAT so the tunnel stays open when idle. Leave it empty otherwise.</p>
+            </aside>
+        </div>
+    {% endif %}
+{% endblock content %}

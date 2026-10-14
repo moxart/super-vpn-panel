@@ -1,0 +1,53 @@
+{% extends 'layouts/app.html' %}
+
+{% block title %}{% if object %}Edit {{ object.interface }}{% else %}New server{% endif %}{% endblock title %}
+
+{% block page_head %}
+    <h1 class="page-title">{% if object %}Edit {{ object.interface }}{% else %}New server{% endif %}</h1>
+    <p class="page-lede">{% if object %}Changes are written to the interface config right away.{% else %}Everything is pre-filled with free values. Check the endpoint, then create.{% endif %}</p>
+{% endblock page_head %}
+
+{% block content %}
+    <div class="form-layout">
+        <form class="form" action="" method="post" novalidate>
+            {% csrf_token %}
+            {% include 'includes/form-errors.html' %}
+
+            <div class="form-row">
+                {% include 'includes/field.html' with field=form.interface %}
+                {% include 'includes/field.html' with field=form.listen_port %}
+            </div>
+            {% include 'includes/field.html' with field=form.endpoint %}
+            {% include 'includes/field.html' with field=form.address %}
+            {% include 'includes/field.html' with field=form.private_key %}
+            {% if object %}
+                <div class="field">
+                    <label class="label" for="public-key">Public key</label>
+                    <input id="public-key" type="text" class="input is-code" value="{{ object.public_key }}" readonly>
+                </div>
+            {% endif %}
+            {% include 'includes/field.html' with field=form.post_up %}
+            {% include 'includes/field.html' with field=form.post_down %}
+            {% include 'includes/field.html' with field=form.save_config %}
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">{% if object %}Save changes{% else %}Create server{% endif %}</button>
+                {% if object %}
+                    <a href="{% url 'wireguard:server-subset' object.interface %}" class="btn btn-quiet">Cancel</a>
+                {% else %}
+                    <a href="{% url 'wireguard:server-new' %}" class="btn">New keys</a>
+                    <a href="{% url 'wireguard:home' %}" class="btn btn-quiet">Cancel</a>
+                {% endif %}
+            </div>
+        </form>
+
+        <aside class="form-aside">
+            <h2>Endpoint</h2>
+            <p>The public host name or IP your devices dial. It goes into every peer's config, so changing it later means re-sharing those configs.</p>
+            <h2>Address</h2>
+            <p>The server's own address and subnet. Peers get the following free addresses. Subnets can't overlap with another server.</p>
+            <h2>Post up and post down</h2>
+            <p>Commands wg-quick runs when the interface starts and stops. The defaults turn on NAT through <code>eth0</code>; change it if your host's uplink has another name.</p>
+        </aside>
+    </div>
+{% endblock content %}

@@ -1,0 +1,24 @@
+{% extends 'layouts/app.html' %}
+
+{% block title %}Peers{% endblock title %}
+
+{% block page_head %}
+    <h1 class="page-title">Peers</h1>
+    <p class="page-lede">Phones, laptops and sites that connect to your servers.</p>
+{% endblock page_head %}
+
+{% block page_actions %}
+    <a href="{% url 'wireguard:peer-new' %}" class="btn btn-primary">Add peer</a>
+{% endblock page_actions %}
+
+{% block content %}
+    {% if peers %}
+        {% include 'includes/peer-table.html' with show_server=True %}
+    {% else %}
+        <div class="empty">
+            <h2>No peers yet</h2>
+            <p>Add a device to get its config file and a QR code for the WireGuard app.</p>
+            <a href="{% url 'wireguard:peer-new' %}" class="btn btn-primary">Add peer</a>
+        </div>
+    {% endif %}
+{% endblock content %}

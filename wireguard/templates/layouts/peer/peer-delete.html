@@ -1,0 +1,20 @@
+{% extends 'layouts/app.html' %}
+
+{% block title %}Delete {{ peer }}{% endblock title %}
+
+{% block page_head %}
+    <h1 class="page-title">Delete {{ peer }}?</h1>
+{% endblock page_head %}
+
+{% block content %}
+    <div class="form">
+        <div class="notice is-danger">
+            {{ peer }} is removed from {% if peer.server %}<span class="mono">{{ peer.server }}</span>{% else %}its server{% endif %} and its keys are discarded. The device stops connecting. To pause it instead, disable it.
+        </div>
+        <form method="post" class="form-actions">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger is-solid">Delete {{ peer }}</button>
+            <a href="{% url 'wireguard:peer-detail' peer.pk %}" class="btn btn-quiet">Cancel</a>
+        </form>
+    </div>
+{% endblock content %}

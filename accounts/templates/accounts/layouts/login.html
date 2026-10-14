@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign in{% endblock title %}
+
+{% block body %}
+<div class="signin">
+    <div class="signin-art">
+        <svg class="tunnels" viewBox="0 0 600 700" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <g fill="none" stroke-linecap="round">
+                <path class="tunnel" pathLength="1" style="--i: 0" d="M300 380 L120 210" stroke="#f2b640" stroke-width="1.5"/>
+                <path class="tunnel" pathLength="1" style="--i: 1" d="M300 380 L490 250" stroke="#f2b640" stroke-width="1.5"/>
+                <path class="tunnel" pathLength="1" style="--i: 2" d="M300 380 L440 560" stroke="#f2b640" stroke-width="1.5"/>
+                <path class="tunnel is-off" pathLength="1" style="--i: 3" d="M300 380 L150 520" stroke-width="1.5"/>
+                <circle cx="300" cy="380" r="150" stroke="#234049" stroke-dasharray="2 6"/>
+            </g>
+            <circle cx="300" cy="380" r="62" fill="rgba(242,182,64,0.12)"/>
+            <circle cx="300" cy="380" r="44" fill="#0a161b" stroke="#f2b640" stroke-width="2.5"/>
+            <g fill="#0a161b" stroke="#5fd3a6" stroke-width="2">
+                <circle cx="120" cy="210" r="8"/>
+                <circle cx="490" cy="250" r="8"/>
+                <circle cx="440" cy="560" r="8"/>
+                <circle cx="150" cy="520" r="8" stroke="#62808a" stroke-dasharray="3 3"/>
+            </g>
+        </svg>
+        <span class="brand">
+            {% include 'includes/brand-mark.html' %}
+            <span class="brand-name">Super VPN Panel<small>WireGuard</small></span>
+        </span>
+        <blockquote>
+            Your servers, your keys, your tunnels.
+            <span>Create WireGuard servers and hand out peer configs from one place. Nothing leaves this host.</span>
+        </blockquote>
+    </div>
+
+    <div class="signin-form">
+        <form action="{% url 'accounts:login' %}" method="post" novalidate>
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}">
+            <h1>Sign in</h1>
+            <p class="page-lede">Use the admin account created with <code>createsuperuser</code>.</p>
+            {% include 'includes/form-errors.html' %}
+            {% for field in form %}
+                {% include 'includes/field.html' %}
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">Sign in</button>
+        </form>
+    </div>
+</div>
+{% endblock body %}

@@ -1,0 +1,53 @@
+{% extends 'layouts/app.html' %}
+
+{% load wireguard_tags %}
+
+{% block title %}{{ peer }}{% endblock title %}
+
+{% block page_head %}
+    <h1 class="page-title">{{ peer.profile_name }}</h1>
+    <p class="page-lede">
+        {% if peer.enabled %}<span class="status is-on">Enabled</span>{% else %}<span class="status is-off">Disabled</span>{% endif %}
+        {% if peer.server %}&ensp;on <a class="server-tag" href="{% url 'wireguard:server-subset' peer.server.interface %}">{{ peer.server }}</a>{% endif %}
+    </p>
+{% endblock page_head %}
+
+{% block page_actions %}
+    <a href="{% url 'wireguard:peer-edit' peer.pk %}" class="btn">Edit</a>
+    <form method="post" action="{% url 'wireguard:peer-toggle' peer.pk %}" class="inline-form">
+        {% csrf_token %}
+        <button type="submit" class="btn">{% if peer.enabled %}Disable{% else %}Enable{% endif %}</button>
+    </form>
+    <a href="{% url 'wireguard:peer-delete' peer.pk %}" class="btn btn-danger">Delete</a>
+{% endblock page_actions %}
+
+{% block content %}
+    {% if peer.server %}
+        <div class="peer-layout">
+            <div class="peer-main">
+                <dl class="facts">
+                    <div><dt>Address</dt><dd class="mono">{{ peer.address }}</dd></div>
+                    <div><dt>DNS</dt><dd class="mono">{{ peer.dns|default:"None" }}</dd></div>
+                    <div><dt>Keepalive</dt><dd>{% if peer.persistent_keepalive %}{{ peer.persistent_keepalive }} s{% else %}Off{% endif %}</dd></div>
+                    <div><dt>Email</dt><dd>{{ peer.email|default:"None" }}</dd></div>
+                    <div class="is-wide"><dt>Public key</dt><dd class="mono">{{ peer.public_key }}</dd></div>
+                </dl>
+                {% if not peer.enabled %}
+                    <div class="notice">This peer is disabled, so the server won't accept it. Enable it to let the device connect again.</div>
+                {% endif %}
+                {% include 'includes/config-block.html' with config_id=peer.pk config=peer|peer_config filename=peer.profile_name|add:'.conf' %}
+            </div>
+
+            <aside class="qr-panel">
+                <div class="qr-tile">
+                    <img src="{% url 'wireguard:peer-download' peer.pk 'qr' %}" width="264" height="264" alt="QR code with the configuration for {{ peer.profile_name }}">
+                </div>
+                <p>Scan with the WireGuard app on a phone: tap +, then “Scan from QR code”.</p>
+                <a href="{% url 'wireguard:peer-download' peer.pk 'conf' %}" class="btn btn-primary" download>Download {{ peer.profile_name }}.conf</a>
+                <a href="{% url 'wireguard:peer-download' peer.pk 'profile' %}" class="btn" download>Download config and QR (.tar.gz)</a>
+            </aside>
+        </div>
+    {% else %}
+        <div class="notice is-danger">This peer's server was deleted, so it has no usable config. Edit it to move it to another server, or delete it.</div>
+    {% endif %}
+{% endblock content %}

@@ -1,0 +1,81 @@
+{% extends 'layouts/app.html' %}
+
+{% block title %}Overview{% endblock title %}
+
+{% block page_head %}
+    <h1 class="page-title">Your network</h1>
+    <p class="page-lede">Every server and the devices connected to it. Select a node to open it.</p>
+{% endblock page_head %}
+
+{% block page_actions %}
+    {% if clusters %}
+        <a href="{% url 'wireguard:server-new' %}" class="btn">New server</a>
+        <a href="{% url 'wireguard:peer-new' %}" class="btn btn-primary">Add peer</a>
+    {% endif %}
+{% endblock page_actions %}
+
+{% block content %}
+    <section class="section" aria-label="Network map">
+        <div class="map">
+            {% for c in clusters %}
+                <figure class="cluster">
+                    <svg class="cluster-svg" viewBox="0 0 {{ c.width }} {{ c.height }}" role="img" aria-label="{{ c.server.interface }} with {{ c.peer_count }} peer{{ c.peer_count|pluralize }}">
+                        <circle class="ring" cx="{{ c.cx }}" cy="{{ c.cy }}" r="{{ c.ring }}"/>
+                        {% for n in c.nodes %}
+                            <line class="tunnel{% if not n.peer.enabled %} is-off{% endif %}" pathLength="1" style="--i: {{ n.order }}" x1="{{ c.cx }}" y1="{{ c.cy }}" x2="{{ n.x }}" y2="{{ n.y }}"/>
+                        {% endfor %}
+                        <a href="{% url 'wireguard:server-subset' c.server.interface %}">
+                            <circle class="hub-halo" cx="{{ c.cx }}" cy="{{ c.cy }}" r="54"/>
+                            <circle class="hub-core" cx="{{ c.cx }}" cy="{{ c.cy }}" r="40"/>
+                            <text class="hub-name" x="{{ c.cx }}" y="{{ c.cy|add:'2' }}" text-anchor="middle">{{ c.server.interface }}</text>
+                            <text class="hub-sub" x="{{ c.cx }}" y="{{ c.cy|add:'18' }}" text-anchor="middle">:{{ c.server.listen_port }}</text>
+                        </a>
+                        {% for n in c.nodes %}
+                            <a class="peer-node" href="{% url 'wireguard:peer-detail' n.peer.pk %}">
+                                <title>{{ n.peer.profile_name }} ({{ n.peer.address }}){% if not n.peer.enabled %}, disabled{% endif %}</title>
+                                <circle class="peer-dot{% if not n.peer.enabled %} is-off{% endif %}" cx="{{ n.x }}" cy="{{ n.y }}" r="6.5"/>
+                                {% if c.label_peers %}
+                                    <text class="peer-label" x="{{ n.label_x }}" y="{{ n.label_y }}" text-anchor="{{ n.anchor }}">{{ n.peer.profile_name }}</text>
+                                {% endif %}
+                            </a>
+                        {% endfor %}
+                        {% if c.hidden_count %}
+                            <text class="more-label" x="{{ c.cx }}" y="{{ c.height }}" text-anchor="middle">and {{ c.hidden_count }} more</text>
+                        {% endif %}
+                    </svg>
+                    <figcaption class="cluster-caption">
+                        <span><a href="{% url 'wireguard:server-subset' c.server.interface %}">{{ c.server.endpoint }}</a>, subnet {{ c.server.network }}</span>
+                        <span>{{ c.enabled_count }} of {{ c.peer_count }} peer{{ c.peer_count|pluralize }} enabled</span>
+                    </figcaption>
+                </figure>
+            {% empty %}
+                <div class="map-empty">
+                    <svg viewBox="0 0 180 120" aria-hidden="true">
+                        <circle class="ghost-ring" cx="90" cy="60" r="52"/>
+                        <circle class="ghost-hub" cx="90" cy="60" r="20"/>
+                    </svg>
+                    <h2>Start with a server</h2>
+                    <p>A server is the WireGuard interface your devices connect to. Keys, a subnet and a port are filled in for you.</p>
+                    <a href="{% url 'wireguard:server-new' %}" class="btn btn-primary">Create a server</a>
+                </div>
+            {% endfor %}
+        </div>
+        {% if clusters %}
+            <p class="totals">
+                <span><strong>{{ server_count }}</strong> server{{ server_count|pluralize }}</span>
+                <span><strong>{{ peer_count }}</strong> peer{{ peer_count|pluralize }}</span>
+                <span><strong>{{ enabled_count }}</strong> enabled</span>
+            </p>
+        {% endif %}
+    </section>
+
+    {% if peers %}
+        <section class="section">
+            <div class="section-head">
+                <h2 class="section-title">Recently added peers</h2>
+                <a href="{% url 'wireguard:peer-list' %}">All peers</a>
+            </div>
+            {% include 'includes/peer-table.html' with show_server=True %}
+        </section>
+    {% endif %}
+{% endblock content %}

@@ -1,0 +1,27 @@
+{% extends 'layouts/app.html' %}
+
+{% block title %}Delete {{ server }}{% endblock title %}
+
+{% block page_head %}
+    <h1 class="page-title">Delete <span class="mono">{{ server }}</span>?</h1>
+{% endblock page_head %}
+
+{% block content %}
+    <div class="form">
+        {% with count=server.peers.count %}
+            <div class="notice is-danger">
+                {% if count %}
+                    This deletes the interface and its {{ count }} peer{{ count|pluralize }}, including their keys. Devices using them will stop connecting. Download a backup first if you might need them.
+                {% else %}
+                    This deletes the interface, its keys and its config file.
+                {% endif %}
+            </div>
+        {% endwith %}
+        <form method="post" class="form-actions">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger is-solid">Delete {{ server }}</button>
+            <a href="{% url 'wireguard:backup' %}" class="btn">Back up first</a>
+            <a href="{% url 'wireguard:server-subset' server.interface %}" class="btn btn-quiet">Cancel</a>
+        </form>
+    </div>
+{% endblock content %}

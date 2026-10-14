@@ -1,0 +1,13 @@
+services:
+  web:
+    container_name: super_vpn_panel
+    build: .
+    environment:
+      DJANGO_DEBUG: "1"
+      DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1"
+      # For anything beyond local use, turn DEBUG off and set a real key:
+      # DJANGO_SECRET_KEY: "change-me"
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"

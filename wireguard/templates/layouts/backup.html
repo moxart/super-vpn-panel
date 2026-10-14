@@ -1,0 +1,35 @@
+{% extends 'layouts/app.html' %}
+
+{% block title %}Backup{% endblock title %}
+
+{% block page_head %}
+    <h1 class="page-title">Backup</h1>
+    <p class="page-lede">Save every server and peer, including private keys, to one JSON file. Restore it here or on a new install.</p>
+{% endblock page_head %}
+
+{% block content %}
+    <section class="section form">
+        <div class="section-head">
+            <h2 class="section-title">Download a backup</h2>
+        </div>
+        <p class="prose-muted">Includes {{ server_count }} server{{ server_count|pluralize }} and {{ peer_count }} peer{{ peer_count|pluralize }}. Anyone with the file can impersonate your server and peers, so keep it somewhere safe.</p>
+        <div class="form-actions">
+            <a href="{% url 'wireguard:backup-export' %}" class="btn btn-primary" download>Download backup</a>
+        </div>
+    </section>
+
+    <section class="section form">
+        <div class="section-head">
+            <h2 class="section-title">Restore from a file</h2>
+        </div>
+        <p class="prose-muted" style="margin-bottom: 20px">Servers and peers whose names already exist here are skipped, never overwritten.</p>
+        <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+            {% include 'includes/form-errors.html' %}
+            {% include 'includes/field.html' with field=form.file %}
+            <div class="form-actions">
+                <button type="submit" class="btn">Restore backup</button>
+            </div>
+        </form>
+    </section>
+{% endblock content %}

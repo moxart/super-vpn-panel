@@ -1,0 +1,53 @@
+{% extends 'layouts/app.html' %}
+
+{% block title %}Servers{% endblock title %}
+
+{% block page_head %}
+    <h1 class="page-title">Servers</h1>
+    <p class="page-lede">Each server is one WireGuard interface with its own subnet, port and keys.</p>
+{% endblock page_head %}
+
+{% block page_actions %}
+    <a href="{% url 'wireguard:server-new' %}" class="btn btn-primary">New server</a>
+{% endblock page_actions %}
+
+{% block content %}
+    {% if servers %}
+        <div class="table-wrap">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Interface</th>
+                        <th scope="col" class="hide-narrow">Endpoint</th>
+                        <th scope="col">Subnet</th>
+                        <th scope="col" class="hide-narrow">Peers</th>
+                        <th scope="col"><span class="visually-hidden">Actions</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for server in servers %}
+                        <tr>
+                            <td>
+                                <a class="row-title mono" href="{% url 'wireguard:server-subset' server.interface %}">{{ server.interface }}</a>
+                                <span class="row-sub">Created {{ server.created_at|date:"j M Y" }}</span>
+                            </td>
+                            <td class="hide-narrow mono">{{ server.endpoint }}:{{ server.listen_port }}</td>
+                            <td class="mono">{{ server.address }}</td>
+                            <td class="hide-narrow">{{ server.peers.count }}</td>
+                            <td class="cell-actions">
+                                <a class="btn btn-small" href="{% url 'wireguard:server-edit' server.pk %}">Edit</a>
+                                <a class="btn btn-small" href="{% url 'wireguard:server-config' server.pk %}" download>Download</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty">
+            <h2>No servers yet</h2>
+            <p>Create a server to get an interface config you can install on your VPN host.</p>
+            <a href="{% url 'wireguard:server-new' %}" class="btn btn-primary">Create a server</a>
+        </div>
+    {% endif %}
+{% endblock content %}

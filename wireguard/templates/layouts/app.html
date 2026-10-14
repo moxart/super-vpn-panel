@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block body %}
+{% with url_name=request.resolver_match.url_name current_iface=request.resolver_match.kwargs.interface %}
+<div class="shell">
+    <aside class="sidebar" id="sidebar">
+        <a class="brand" href="{% url 'wireguard:home' %}">
+            {% include 'includes/brand-mark.html' %}
+            <span class="brand-name">Super VPN Panel<small>WireGuard</small></span>
+        </a>
+        <button class="btn btn-small menu-toggle" type="button" aria-expanded="false" aria-controls="sidebar">Menu</button>
+
+        <nav class="nav" aria-label="Main">
+            <a href="{% url 'wireguard:home' %}"{% if url_name == 'home' %} aria-current="page"{% endif %}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="3.5"/><circle cx="4.5" cy="5" r="2"/><circle cx="19.5" cy="5.5" r="2"/><circle cx="18" cy="19.5" r="2"/><path d="M9.5 9.5 6 6.5M14.7 10.3l3.4-3.3M14 14.5l2.7 3.4"/></svg>
+                Overview
+            </a>
+            <a href="{% url 'wireguard:peer-list' %}"{% if url_name == 'peer-list' or url_name == 'peer-detail' or url_name == 'peer-edit' or url_name == 'peer-delete' %} aria-current="page"{% endif %}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></svg>
+                Peers
+            </a>
+            <a href="{% url 'wireguard:server-list' %}"{% if url_name == 'server-list' %} aria-current="page"{% endif %}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 7.5h.01M7 16.5h.01"/></svg>
+                Servers
+            </a>
+            <a href="{% url 'wireguard:backup' %}"{% if url_name == 'backup' %} aria-current="page"{% endif %}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 7c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3Z"/><path d="M4 7v10c0 1.7 3.6 3 8 3s8-1.3 8-3V7M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>
+                Backup
+            </a>
+
+            <p class="nav-group">Interfaces</p>
+            {% for s in sidebar_servers %}
+                <a class="nav-server" href="{% url 'wireguard:server-subset' s.interface %}"{% if current_iface == s.interface %} aria-current="page"{% endif %}>
+                    <span class="hub" aria-hidden="true"></span>{{ s.interface }}<span class="count">{{ s.peers.count }}</span>
+                </a>
+            {% endfor %}
+            <a class="nav-add" href="{% url 'wireguard:server-new' %}"{% if url_name == 'server-new' %} aria-current="page"{% endif %}>+ New server</a>
+        </nav>
+
+        <div class="sidebar-foot">
+            <span>{{ user.get_username }}</span>
+            <form method="post" action="{% url 'accounts:logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="link-button">Log out</button>
+            </form>
+        </div>
+    </aside>
+
+    <main class="main">
+        <header class="page-head">
+            <div>
+                {% block page_head %}{% endblock page_head %}
+            </div>
+            <div class="page-actions">{% block page_actions %}{% endblock page_actions %}</div>
+        </header>
+        <div class="content">
+            {% block content %}{% endblock content %}
+        </div>
+    </main>
+</div>
+{% endwith %}
+{% endblock body %}

@@ -1,0 +1,27 @@
+{% load wireguard_tags %}
+{% for peer in peers %}
+    <tr>
+        <td>
+            <a class="row-title" href="{% url 'wireguard:peer-detail' peer.pk %}">{{ peer.profile_name }}</a>
+            {% if peer.email %}<span class="row-sub">{{ peer.email }}</span>{% endif %}
+        </td>
+        {% if show_server %}
+            <td class="hide-narrow">{% if peer.server %}<a class="server-tag" href="{% url 'wireguard:server-subset' peer.server.interface %}">{{ peer.server }}</a>{% else %}<span class="row-sub">no server</span>{% endif %}</td>
+        {% endif %}
+        <td class="mono">{{ peer.address }}</td>
+        <td class="hide-narrow">{% if peer.enabled %}<span class="status is-on">Enabled</span>{% else %}<span class="status is-off">Disabled</span>{% endif %}</td>
+        <td class="cell-actions">
+            {% if peer.server %}
+                <button class="btn btn-small toggle-config" type="button" aria-expanded="false" aria-controls="config-row-{{ peer.pk }}">Config</button>
+                <a class="btn btn-small" href="{% url 'wireguard:peer-download' peer.pk 'conf' %}" download>Download</a>
+            {% endif %}
+        </td>
+    </tr>
+    {% if peer.server %}
+        <tr class="config-row" id="config-row-{{ peer.pk }}" hidden>
+            <td colspan="{% if show_server %}5{% else %}4{% endif %}">
+                {% include 'includes/config-block.html' with config_id=peer.pk config=peer|peer_config filename=peer.profile_name|add:'.conf' %}
+            </td>
+        </tr>
+    {% endif %}
+{% endfor %}

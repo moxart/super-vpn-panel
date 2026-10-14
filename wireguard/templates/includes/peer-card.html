@@ -1,0 +1,29 @@
+{% load wireguard_tags %}
+<div class="column mb-5 is-half-desktop peer">
+    <div class="profile_name">
+        <a href="{% url 'wireguard:peer-detail' peer.pk %}"><h3 class="is-size-4 mb-4">{{ peer.profile_name }}</h3></a>
+        {% if not peer.enabled %}<span class="tag is-dark">disabled</span>{% endif %}
+    </div>
+    <span><time>{{ peer.created_at }}</time></span>
+    {% if peer.server %}
+        <div class="qr my-4">
+            <img src="{% url 'wireguard:peer-download' peer.pk 'qr' %}" loading="lazy" width="250" alt="QR code for {{ peer.profile_name }}">
+        </div>
+    {% endif %}
+    <ul>
+        <li>Server: <span>{{ peer.server|default:"(none)" }}</span></li>
+        <li>IP Address: <span>{{ peer.address }}</span></li>
+        <li>Email: <span>{{ peer.email|default:"-" }}</span></li>
+        <li>Public Key: <span>{{ peer.public_key }}</span></li>
+    </ul>
+    <div class="extra mt-5">
+        {% if peer.server %}
+            <button class="button btn-custom-dark show-config mb-2" type="button"><span>Show Config</span></button>
+            <button class="button btn-custom-dark show-qrcode mb-2" type="button"><span>Show QR Code</span></button>
+            <a href="{% url 'wireguard:peer-download' peer.pk 'conf' %}" class="button btn-custom-dark download-config mb-2">Download .conf</a>
+            {% include 'includes/config-block.html' with config_id=peer.pk config=peer|peer_config extra_class='item' %}
+        {% else %}
+            <p class="help is-danger">This peer's server was deleted; it has no usable config.</p>
+        {% endif %}
+    </div>
+</div>

@@ -1,0 +1,8 @@
+{% load wireguard_tags %}
+<div class="config">
+    <div class="config-bar">
+        <span>{{ filename }}</span>
+        <button class="btn btn-small btn-quiet copy-button" type="button" data-clipboard-target="#config-{{ config_id }}">Copy</button>
+    </div>
+    <pre id="config-{{ config_id }}">{{ config|highlight_config }}</pre>
+</div>
